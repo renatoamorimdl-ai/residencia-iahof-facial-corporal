@@ -22,4 +22,3 @@ vercel.json           URLs limpas + cache dos assets
 - **WhatsApp**: `WA_NUMBER` em `assets/js/script.js`. Cada botão tem a própria mensagem em `data-msg` no HTML.
 - **UTMs**: se a URL tiver `utm_source`/`utm_campaign`, a origem é anexada à mensagem do WhatsApp.
 - **Pixel / GTM**: cole os scripts no `<head>` (há um comentário marcando o local). Todo clique em botão de WhatsApp dispara `fbq('track','Contact')`, `gtag('event','whatsapp_click')` e `dataLayer.push({event:'whatsapp_click', cta})`.
-- **Bio da Dra. Silvia Micheline**: substituir o texto marcado com `TODO` no `index.html`.
