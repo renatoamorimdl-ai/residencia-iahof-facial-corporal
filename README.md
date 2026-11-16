@@ -21,4 +21,4 @@ vercel.json           URLs limpas + cache dos assets
 ## Ajustes rápidos
 - **WhatsApp**: `WA_NUMBER` em `assets/js/script.js`. Cada botão tem a própria mensagem em `data-msg` no HTML.
 - **UTMs**: se a URL tiver `utm_source`/`utm_campaign`, a origem é anexada à mensagem do WhatsApp.
-- **Pixel / GTM**: cole os scripts no `<head>` (há um comentário marcando o local). Todo clique em botão de WhatsApp dispara `fbq('track','Contact')`, `gtag('event','whatsapp_click')` e `dataLayer.push({event:'whatsapp_click', cta})`.
+- **Meta Pixel** (ID 567992274670139) já instalado no `<head>`: PageView em toda visita, `Contact` em cada clique de WhatsApp e `ViewContent` quando a seção de investimento aparece. GTM/GA4: cole no `<head>`; os cliques também vão para `gtag('event','whatsapp_click')` e `dataLayer`.

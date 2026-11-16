@@ -48,6 +48,18 @@
     items.forEach(function (el) { el.classList.add('is-in'); });
   }
 
+  // ===== Meta Pixel: ViewContent ao ver a seção de investimento (1x por visita) =====
+  var priceSec = document.getElementById('investimento');
+  if (priceSec && 'IntersectionObserver' in window) {
+    var po = new IntersectionObserver(function (entries) {
+      if (entries[0].isIntersecting) {
+        try { if (typeof window.fbq === 'function') window.fbq('track', 'ViewContent', { content_name: 'Residencia IAHOF - Investimento' }); } catch (e) {}
+        po.disconnect();
+      }
+    }, { threshold: 0.25 });
+    po.observe(priceSec);
+  }
+
   // ===== Header + botão flutuante =====
   var topbar = document.getElementById('topbar');
   var float = document.querySelector('.wa-float');
