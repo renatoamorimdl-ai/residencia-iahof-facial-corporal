@@ -413,6 +413,27 @@
   <span>Fale com a equipe</span>
 </a>
 
+<!-- Formulário de captura (abre ao clicar em qualquer botão de WhatsApp) -->
+<div class="lead-modal" id="lead-modal" hidden>
+  <div class="lead-modal__backdrop" data-close></div>
+  <div class="lead-modal__box" role="dialog" aria-modal="true" aria-labelledby="lead-title">
+    <button type="button" class="lead-modal__close" data-close aria-label="Fechar">&times;</button>
+    <img src="/assets/img/logo-iahof.png" alt="IAHOF" class="lead-modal__logo" width="90" height="46">
+    <h2 id="lead-title">Fale com a equipe do IAHOF</h2>
+    <p>Deixe seu nome e WhatsApp para receber as condições da Residência. Em seguida, você será levado(a) para a conversa.</p>
+    <form id="lead-form" novalidate>
+      <label for="lead-nome">Nome</label>
+      <input id="lead-nome" name="nome" type="text" autocomplete="name" placeholder="Seu nome completo" required maxlength="120">
+      <label for="lead-telefone">WhatsApp</label>
+      <input id="lead-telefone" name="telefone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(81) 99999-9999" required>
+      <div class="hp" aria-hidden="true"><label for="lead-website">Site</label><input id="lead-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+      <p class="lead-modal__err" id="lead-erro" role="alert"></p>
+      <button type="submit" class="btn btn--primary btn--lg lead-modal__btn">Continuar para o WhatsApp</button>
+      <p class="lead-modal__privacy">Seus dados são usados apenas para o contato da equipe IAHOF sobre a Residência.</p>
+    </form>
+  </div>
+</div>
+
 <script src="/assets/js/script.js" defer></script>
 </body>
 </html>

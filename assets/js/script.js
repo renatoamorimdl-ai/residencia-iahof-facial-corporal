@@ -22,17 +22,135 @@
     return 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent((msg || DEFAULT_MSG) + originTag());
   }
 
+  // ===== Captura de lead → planilha Google → WhatsApp =====
+  // URL do App da Web do Google Apps Script (ver README, seção "Leads na planilha").
+  // Enquanto estiver vazia, o formulário funciona e leva ao WhatsApp, mas não grava na planilha.
+  var LEADS_ENDPOINT = '';
+
+  var modal = document.getElementById('lead-modal');
+  var form = document.getElementById('lead-form');
+  var fName = document.getElementById('lead-nome');
+  var fPhone = document.getElementById('lead-telefone');
+  var fErr = document.getElementById('lead-erro');
+  var pending = { msg: DEFAULT_MSG, cta: 'cta' };
+  var lastFocus = null;
+
+  function track(cta) {
+    try { if (typeof window.fbq === 'function') window.fbq('track', 'Contact', { content_name: 'Residencia IAHOF', cta: cta }); } catch (e) {}
+    try { if (typeof window.gtag === 'function') window.gtag('event', 'whatsapp_click', { cta: cta }); } catch (e) {}
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: 'whatsapp_click', cta: cta });
+  }
+
+  function savedLead() {
+    try { return JSON.parse(localStorage.getItem('iahof_lead') || 'null'); } catch (e) { return null; }
+  }
+
+  function goWhatsApp(url) {
+    var w = null;
+    try { w = window.open(url, '_blank'); if (w) w.opener = null; } catch (e) {}
+    if (!w) window.location.href = url;   // pop-up bloqueado: abre na mesma aba
+  }
+
+  function personalize(msg, nome) {
+    var first = (nome || '').trim().split(/\s+/)[0];
+    return first ? msg.replace(/^Olá!/, 'Olá! Meu nome é ' + first + '.') : msg;
+  }
+
+  function openModal(cta, msg) {
+    pending = { cta: cta, msg: msg };
+    lastFocus = document.activeElement;
+    fErr.textContent = '';
+    modal.hidden = false;
+    document.body.classList.add('modal-open');
+    requestAnimationFrame(function () { modal.classList.add('is-open'); });
+    setTimeout(function () { fName.focus(); }, 60);
+  }
+
+  function closeModal() {
+    modal.classList.remove('is-open');
+    document.body.classList.remove('modal-open');
+    setTimeout(function () { modal.hidden = true; }, 250);
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
   document.querySelectorAll('.js-wa').forEach(function (el) {
-    el.setAttribute('href', waLink(el.getAttribute('data-msg')));
+    el.setAttribute('href', waLink(el.getAttribute('data-msg')));  // fallback sem JS
     el.setAttribute('target', '_blank');
     el.setAttribute('rel', 'noopener');
-    el.addEventListener('click', function () {
+    el.addEventListener('click', function (ev) {
       var cta = el.getAttribute('data-cta') || 'cta';
-      try { if (typeof window.fbq === 'function') window.fbq('track', 'Contact', { content_name: 'Residencia IAHOF', cta: cta }); } catch (e) {}
-      try { if (typeof window.gtag === 'function') window.gtag('event', 'whatsapp_click', { cta: cta }); } catch (e) {}
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ event: 'whatsapp_click', cta: cta });
+      var msg = el.getAttribute('data-msg') || DEFAULT_MSG;
+      var lead = savedLead();
+      if (lead && lead.nome) {               // já deixou os dados nesta visita/aparelho
+        ev.preventDefault();
+        track(cta);
+        goWhatsApp(waLink(personalize(msg, lead.nome)));
+        return;
+      }
+      ev.preventDefault();
+      openModal(cta, msg);
     });
+  });
+
+  // Máscara (81) 99999-9999
+  fPhone.addEventListener('input', function () {
+    var d = fPhone.value.replace(/\D/g, '');
+    if (d.length > 11 && d.indexOf('55') === 0) d = d.slice(2);
+    d = d.slice(0, 11);
+    var out = d;
+    if (d.length > 2) out = '(' + d.slice(0, 2) + ') ' + d.slice(2);
+    if (d.length > 7) out = '(' + d.slice(0, 2) + ') ' + d.slice(2, d.length - 4) + '-' + d.slice(-4);
+    fPhone.value = out;
+  });
+
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var nome = fName.value.trim().replace(/\s+/g, ' ');
+    var digits = fPhone.value.replace(/\D/g, '');
+    if (nome.length < 2) { fErr.textContent = 'Informe seu nome.'; fName.focus(); return; }
+    if (digits.length < 10 || digits.length > 11) { fErr.textContent = 'Informe um WhatsApp válido com DDD.'; fPhone.focus(); return; }
+
+    var p = new URLSearchParams(window.location.search);
+    var data = {
+      nome: nome,
+      telefone: fPhone.value,
+      cta: pending.cta,
+      utm_source: p.get('utm_source') || '',
+      utm_medium: p.get('utm_medium') || '',
+      utm_campaign: p.get('utm_campaign') || '',
+      utm_content: p.get('utm_content') || '',
+      utm_term: p.get('utm_term') || '',
+      pagina: window.location.href.split('#')[0],
+      website: form.website.value   // honeypot
+    };
+
+    if (LEADS_ENDPOINT) {
+      try {
+        fetch(LEADS_ENDPOINT, {
+          method: 'POST', mode: 'no-cors', keepalive: true,
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(data)
+        }).catch(function () {});
+      } catch (e) {}
+    }
+
+    try { localStorage.setItem('iahof_lead', JSON.stringify({ nome: nome })); } catch (e) {}
+    try { if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { content_name: 'Residencia IAHOF', cta: pending.cta }); } catch (e) {}
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: 'lead_form_submit', cta: pending.cta });
+    track(pending.cta);
+
+    goWhatsApp(waLink(personalize(pending.msg, nome)));
+    form.reset();
+    closeModal();
+  });
+
+  modal.addEventListener('click', function (ev) {
+    if (ev.target.hasAttribute('data-close')) closeModal();
+  });
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape' && !modal.hidden) closeModal();
   });
 
   // ===== Reveal on scroll =====
