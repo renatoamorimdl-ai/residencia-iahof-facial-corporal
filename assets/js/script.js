@@ -25,7 +25,7 @@
   // ===== Captura de lead → planilha Google → WhatsApp =====
   // URL do App da Web do Google Apps Script (ver README, seção "Leads na planilha").
   // Enquanto estiver vazia, o formulário funciona e leva ao WhatsApp, mas não grava na planilha.
-  var LEADS_ENDPOINT = '';
+  var LEADS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwNALlmzJxBVfaW-xWcY2HI02Hr_a-CPrXt20pJ-ff8Tkauq8BO22V2OL8W81elXBI9/exec';
 
   var modal = document.getElementById('lead-modal');
   var form = document.getElementById('lead-form');
