@@ -1,11 +1,14 @@
 /**
+ * @OnlyCurrentDoc
+ *
  * IAHOF — Residência Facial e Corporal
  * Recebe os leads do formulário da landing page e grava na planilha
  * "Leads IAHOF - Residência Facial e Corporal" (aba "Página1").
  *
+ * Este script precisa ser criado DENTRO da planilha (Extensões → Apps Script).
+ * Ele só pede acesso à planilha atual (escopo spreadsheets.currentonly).
  * Como publicar: veja o README do projeto (seção "Leads na planilha").
  */
-var SPREADSHEET_ID = '1sFgcYRiCoiF31PDshQrAHKz3NNsqtCH80oGKuvdAm9U';
 var SHEET_NAME = 'Página1';
 
 function doPost(e) {
@@ -23,7 +26,8 @@ function doPost(e) {
       return json_({ ok: false, error: 'dados_invalidos' });
     }
 
-    var sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName(SHEET_NAME) || ss.getSheets()[0];
     sheet.appendRow([
       new Date(),
       nome,

@@ -31,10 +31,12 @@ Quem já preencheu no mesmo aparelho vai direto para o WhatsApp nos próximos cl
 Colunas: Data/Hora · Nome · Telefone · Botão clicado · utm_source · utm_medium · utm_campaign · utm_content · utm_term · Página
 
 ### Ativar a gravação (uma vez)
-1. Abra a planilha → **Extensões → Apps Script**.
-2. Apague o conteúdo e cole o arquivo `google-apps-script/Code.gs`. Salve.
-3. **Implantar → Nova implantação** → tipo **App da Web**.
-   - Executar como: **Eu** · Quem pode acessar: **Qualquer pessoa** → Implantar e autorizar.
-4. Copie a URL que termina em `/exec` e cole em `LEADS_ENDPOINT` no início de `assets/js/script.js`.
+1. Abra a planilha → **Extensões → Apps Script** (o script precisa ficar vinculado à planilha).
+2. Em `Código.gs`, apague tudo e cole `google-apps-script/Code.gs`.
+3. **Configurações do projeto (engrenagem)** → marque *Mostrar o arquivo de manifesto "appsscript.json" no editor*.
+   Volte ao editor, abra `appsscript.json`, apague tudo e cole `google-apps-script/appsscript.json`. Salve.
+   (Isso limita o pedido de permissão a "somente esta planilha" e evita o bloqueio "This app is blocked".)
+4. **Implantar → Nova implantação** → tipo **App da Web** · Executar como: **Eu** · Quem pode acessar: **Qualquer pessoa** → Implantar e autorizar.
+5. Copie a URL que termina em `/exec` e cole em `LEADS_ENDPOINT` no início de `assets/js/script.js`.
 
 Eventos: `Lead` (Meta Pixel) e `lead_form_submit` (dataLayer) no envio do formulário; `Contact` ao seguir para o WhatsApp.
