@@ -57,10 +57,15 @@
     return first ? msg.replace(/^Olá!/, 'Olá! Meu nome é ' + first + '.') : msg;
   }
 
+  var hideTimer = null;
   function openModal(cta, msg) {
     pending = { cta: cta, msg: msg };
     lastFocus = document.activeElement;
     fErr.textContent = '';
+    var lead = savedLead();                 // quem já preencheu antes encontra os campos prontos
+    if (lead && lead.nome && !fName.value) fName.value = lead.nome;
+    if (lead && lead.telefone && !fPhone.value) fPhone.value = lead.telefone;
+    clearTimeout(hideTimer);
     modal.hidden = false;
     document.body.classList.add('modal-open');
     requestAnimationFrame(function () { modal.classList.add('is-open'); });
@@ -70,26 +75,18 @@
   function closeModal() {
     modal.classList.remove('is-open');
     document.body.classList.remove('modal-open');
-    setTimeout(function () { modal.hidden = true; }, 250);
+    hideTimer = setTimeout(function () { modal.hidden = true; }, 250);
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
 
   document.querySelectorAll('.js-wa').forEach(function (el) {
-    el.setAttribute('href', waLink(el.getAttribute('data-msg')));  // fallback sem JS
-    el.setAttribute('target', '_blank');
-    el.setAttribute('rel', 'noopener');
+    // Sem link direto para o WhatsApp: todo clique passa pelo formulário
+    el.setAttribute('href', '#inscricao');
+    el.setAttribute('role', 'button');
+    el.removeAttribute('target');
     el.addEventListener('click', function (ev) {
-      var cta = el.getAttribute('data-cta') || 'cta';
-      var msg = el.getAttribute('data-msg') || DEFAULT_MSG;
-      var lead = savedLead();
-      if (lead && lead.nome) {               // já deixou os dados nesta visita/aparelho
-        ev.preventDefault();
-        track(cta);
-        goWhatsApp(waLink(personalize(msg, lead.nome)));
-        return;
-      }
       ev.preventDefault();
-      openModal(cta, msg);
+      openModal(el.getAttribute('data-cta') || 'cta', el.getAttribute('data-msg') || DEFAULT_MSG);
     });
   });
 
@@ -135,7 +132,7 @@
       } catch (e) {}
     }
 
-    try { localStorage.setItem('iahof_lead', JSON.stringify({ nome: nome })); } catch (e) {}
+    try { localStorage.setItem('iahof_lead', JSON.stringify({ nome: nome, telefone: fPhone.value })); } catch (e) {}
     try { if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { content_name: 'Residencia IAHOF', cta: pending.cta }); } catch (e) {}
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({ event: 'lead_form_submit', cta: pending.cta });

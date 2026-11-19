@@ -26,7 +26,7 @@ vercel.json           URLs limpas + cache dos assets
 ## Leads na planilha (Google Sheets)
 Todo botão de WhatsApp abre um formulário (Nome + WhatsApp). Ao enviar, os dados vão para a planilha
 **Leads IAHOF - Residência Facial e Corporal** e a pessoa é levada à conversa no WhatsApp com o nome já na mensagem.
-Quem já preencheu no mesmo aparelho vai direto para o WhatsApp nos próximos cliques.
+O formulário abre em todo clique; quem já preencheu no mesmo aparelho encontra nome e telefone preenchidos.
 
 Colunas: Data/Hora · Nome · Telefone · Botão clicado · utm_source · utm_medium · utm_campaign · utm_content · utm_term · Página
 
