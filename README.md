@@ -19,6 +19,7 @@ vercel.json           URLs limpas + cache dos assets
 3. Domínio próprio (opcional): Settings → Domains.
 
 ## Ajustes rápidos
+- **Cache**: ao alterar CSS/JS, troque o `?v=` nos links do `index.html` para os visitantes receberem a versão nova.
 - **WhatsApp**: `WA_NUMBER` em `assets/js/script.js`. Cada botão tem a própria mensagem em `data-msg` no HTML.
 - **UTMs**: se a URL tiver `utm_source`/`utm_campaign`, a origem é anexada à mensagem do WhatsApp.
 - **Meta Pixel** (ID 567992274670139) já instalado no `<head>`: PageView em toda visita, `Contact` em cada clique de WhatsApp e `ViewContent` quando a seção de investimento aparece. GTM/GA4: cole no `<head>`; os cliques também vão para `gtag('event','whatsapp_click')` e `dataLayer`.
