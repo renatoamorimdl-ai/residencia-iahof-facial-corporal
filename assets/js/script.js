@@ -3,6 +3,10 @@
 
   // ===== Configuração do WhatsApp =====
   var WA_NUMBER = '5581991728950'; // (81) 99172-8950
+  // Identificador fixo desta LP nos eventos do Pixel (usado nas conversões personalizadas)
+  var PIXEL_TAG = { content_name: 'Residencia IAHOF', content_category: 'residencia-facial-corporal' };
+  function px(extra) { var o = {}; for (var k in PIXEL_TAG) o[k] = PIXEL_TAG[k]; for (var j in extra) o[j] = extra[j]; return o; }
+
   var DEFAULT_MSG = 'Olá! Quero informações sobre a Residência em Harmonização Facial e Corporal do IAHOF.';
 
   document.documentElement.classList.add('js');
@@ -36,7 +40,7 @@
   var lastFocus = null;
 
   function track(cta) {
-    try { if (typeof window.fbq === 'function') window.fbq('track', 'Contact', { content_name: 'Residencia IAHOF', cta: cta }); } catch (e) {}
+    try { if (typeof window.fbq === 'function') window.fbq('track', 'Contact', px({ cta: cta })); } catch (e) {}
     try { if (typeof window.gtag === 'function') window.gtag('event', 'whatsapp_click', { cta: cta }); } catch (e) {}
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({ event: 'whatsapp_click', cta: cta });
@@ -133,7 +137,7 @@
     }
 
     try { localStorage.setItem('iahof_lead', JSON.stringify({ nome: nome, telefone: fPhone.value })); } catch (e) {}
-    try { if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { content_name: 'Residencia IAHOF', cta: pending.cta }); } catch (e) {}
+    try { if (typeof window.fbq === 'function') window.fbq('track', 'Lead', px({ cta: pending.cta })); } catch (e) {}
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({ event: 'lead_form_submit', cta: pending.cta });
     track(pending.cta);
@@ -168,7 +172,7 @@
   if (priceSec && 'IntersectionObserver' in window) {
     var po = new IntersectionObserver(function (entries) {
       if (entries[0].isIntersecting) {
-        try { if (typeof window.fbq === 'function') window.fbq('track', 'ViewContent', { content_name: 'Residencia IAHOF - Investimento' }); } catch (e) {}
+        try { if (typeof window.fbq === 'function') window.fbq('track', 'ViewContent', px({ content_name: 'Residencia IAHOF - Investimento' })); } catch (e) {}
         po.disconnect();
       }
     }, { threshold: 0.25 });
