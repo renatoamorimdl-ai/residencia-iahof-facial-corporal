@@ -29,7 +29,7 @@ Todo botão de WhatsApp abre um formulário (Nome + WhatsApp). Ao enviar, os dad
 **Leads IAHOF - Residência Facial e Corporal** e a pessoa é levada à conversa no WhatsApp com o nome já na mensagem.
 O formulário abre em todo clique; quem já preencheu no mesmo aparelho encontra nome e telefone preenchidos.
 
-Colunas: Data/Hora · Nome · Telefone · Botão clicado · utm_source · utm_medium · utm_campaign · utm_content · utm_term · Página
+Colunas (Telefone no formato 5581999999999): Data/Hora · Nome · Telefone · Botão clicado · utm_source · utm_medium · utm_campaign · utm_content · utm_term · Página
 
 ### Ativar a gravação (uma vez)
 1. Abra a planilha → **Extensões → Apps Script** (o script precisa ficar vinculado à planilha).

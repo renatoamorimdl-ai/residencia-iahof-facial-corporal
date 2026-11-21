@@ -115,7 +115,7 @@
     var p = new URLSearchParams(window.location.search);
     var data = {
       nome: nome,
-      telefone: fPhone.value,
+      telefone: '55' + digits,          // formato 5581999999999 (país + DDD + número)
       cta: pending.cta,
       utm_source: p.get('utm_source') || '',
       utm_medium: p.get('utm_medium') || '',
